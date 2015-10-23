@@ -7,10 +7,12 @@
 
 from lib.coloring.coloring.ordering import color_by_ordering, \
      next_free_color, most_used_color, least_used_color
-
+from lib.util.priority_dictionary import priorityDictionary as \
+     priorityDictionary
 
 def dsatur(orig, g, trans, frat, col, silent=True):
-    satdeg = {}
+    satdeg = priorityDictionary()
+    #satdeg = {}
     ncols = {}
     for v in g:
         satdeg[v] = 0
@@ -38,11 +40,13 @@ def dsatur(orig, g, trans, frat, col, silent=True):
             return v
         # Now choose vertex that sees a maximum num of colors
         # Todo: us a priority queue here.
-        res = maxsat = -1
-        for v in satdeg:
-            if satdeg[v] > maxsat:
-                maxsat = satdeg[v]
-                res = v
+        #res = maxsat = -1
+        #for v in satdeg:
+            #if satdeg[v] > maxsat:
+                #maxsat = satdeg[v]
+                #res = v
+        # Priority dictionary
+        res = satdeg.smallest()
 
         del satdeg[res]
         del ncols[res]
