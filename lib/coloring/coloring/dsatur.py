@@ -7,15 +7,15 @@
 
 from lib.coloring.coloring.ordering import color_by_ordering, \
      next_free_color, most_used_color, least_used_color
-from lib.util.priority_dictionary import priorityDictionary as \
-     priorityDictionary
+
+import heapq
+
 
 def dsatur(orig, g, trans, frat, col, silent=True):
-    satdeg = priorityDictionary()
-    #satdeg = {}
+    satdeg = [] 
     ncols = {}
     for v in g:
-        satdeg[v] = 0
+        heapq.heappush(satdeg, [0, v])
         ncols[v] = set()
 
     def upd(v, coloring, colorstats, graph):
@@ -23,7 +23,10 @@ def dsatur(orig, g, trans, frat, col, silent=True):
         for w in graph.neighbours(v):
             if w in ncols and vcol not in ncols[w]:
                 ncols[w].add(vcol)
-                satdeg[w] += 1
+                for pair in satdeg:
+                    if pair[1] == w:
+                        pair[0] -= 1
+                        break
 
     def vchoice(uncolored, coloring, graph):
         # First choice: some max deg vertex
@@ -40,15 +43,9 @@ def dsatur(orig, g, trans, frat, col, silent=True):
             return v
         # Now choose vertex that sees a maximum num of colors
         # Todo: us a priority queue here.
-        #res = maxsat = -1
-        #for v in satdeg:
-            #if satdeg[v] > maxsat:
-                #maxsat = satdeg[v]
-                #res = v
-        # Priority dictionary
-        res = satdeg.smallest()
-
-        del satdeg[res]
+        heapnode = heapq.heappop(satdeg)
+        res = heapnode[1]
+        del heapnode
         del ncols[res]
         return res
 
