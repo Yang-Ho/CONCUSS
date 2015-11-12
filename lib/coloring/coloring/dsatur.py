@@ -38,7 +38,9 @@ def dsatur(orig, g, trans, frat, col, silent=True):
                 if d > maxdeg:
                     maxdeg = d
                     maxv = v
-            del satdeg[v]
+            #del satdeg[v]
+            index = next((i for i, pair in enumerate(satdeg) if pair[1] == v), None)
+            del satdeg[index]
             del ncols[v]
             return v
         # Now choose vertex that sees a maximum num of colors
