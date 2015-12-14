@@ -8,14 +8,12 @@
 from lib.coloring.coloring.ordering import color_by_ordering, \
      next_free_color, most_used_color, least_used_color
 
-import heapq
-
 
 def dsatur(orig, g, trans, frat, col, silent=True):
-    satdeg = [] 
+    satdeg = {}
     ncols = {}
     for v in g:
-        heapq.heappush(satdeg, [0, v])
+        satdeg[v] = 0
         ncols[v] = set()
 
     def upd(v, coloring, colorstats, graph):
@@ -23,10 +21,7 @@ def dsatur(orig, g, trans, frat, col, silent=True):
         for w in graph.neighbours(v):
             if w in ncols and vcol not in ncols[w]:
                 ncols[w].add(vcol)
-                for pair in satdeg:
-                    if pair[1] == w:
-                        pair[0] -= 1
-                        break
+                satdeg[w] += 1
 
     def vchoice(uncolored, coloring, graph):
         # First choice: some max deg vertex
@@ -38,16 +33,18 @@ def dsatur(orig, g, trans, frat, col, silent=True):
                 if d > maxdeg:
                     maxdeg = d
                     maxv = v
-            #del satdeg[v]
-            index = next((i for i, pair in enumerate(satdeg) if pair[1] == v), None)
-            del satdeg[index]
+            del satdeg[v]
             del ncols[v]
             return v
         # Now choose vertex that sees a maximum num of colors
         # Todo: us a priority queue here.
-        heapnode = heapq.heappop(satdeg)
-        res = heapnode[1]
-        del heapnode
+        res = maxsat = -1
+        for v in satdeg:
+            if satdeg[v] > maxsat:
+                maxsat = satdeg[v]
+                res = v
+
+        del satdeg[res]
         del ncols[res]
         return res
 

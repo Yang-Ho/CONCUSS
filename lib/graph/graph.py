@@ -610,6 +610,13 @@ class TFGraph(object):
         """ An iterator for the graph's nodes """
         return iter(self.nodes)
 
+    def get_size(self):
+        """ Memory debugging purposes (likely temporary)"""
+        node_size = sys.getsizeof(self.nodes)
+        inarcs_size = sys.getsizeof(self.inarcs)
+        inarcs_weight_size = sys.getsizeof(self.inarcs_weight)
+        print "Nodes: {}, Inarcs: {}, Inarcs Weight: {}".format(node_size, inarcs_size, inarcs_weight_size)
+
     def add_node(self, u):
         """ Add a node to the graph """
         self.nodes.add(u)
